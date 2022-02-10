@@ -3,11 +3,12 @@ import time
 from colorama import Fore
 import multiprocessing
 
-flags = [False, False, False]
-varient = [ 'photo/1.png', 'photo/2.png', 'photo/3.png', 'photo/4.png', 'photo/5.png', 'photo/6.png', 'photo/7.png',
-           'photo/8.png', 'photo/9.png', 'photo/10.png', 'photo/bs.png', 'photo/bs2.png','photo/go.png']
-varient2 = ['photo/1.png', 'photo/2.png', 'photo/3.png', 'photo/4.png', 'photo/5.png', 'photo/6.png', 'photo/7.png',
-            'photo/8.png', 'photo/9.png', 'photo/10.png', 'photo/bs.png', 'photo/bs2.png', 'photo/go.png']
+flags = []
+varient = ['photo/go.png', 'photo/1.png', 'photo/2.png', 'photo/3.png', 'photo/4.png', 'photo/5.png', 'photo/6.png',
+           'photo/7.png', 'photo/bs.png', 'photo/bs2.png']
+varient2 = ['photo/terminal.png', 'photo/1.png', 'photo/2.png', 'photo/8.png', 'photo/9.png']
+varient3 = ['photo/1.png', 'photo/2.png', 'photo/3.png', 'photo/4.png', 'photo/5.png', 'photo/6.png', 'photo/7.png',
+            'photo/bs.png', 'photo/bs2.png', 'photo/info.png']
 
 
 def timer():
@@ -21,38 +22,60 @@ def timer():
     time.sleep(1)
 
 
-def search(i, n):
+def search_1(i):
     place = auto.locateOnScreen(i)
-    if place:
-        flags[n] = True
-        auto.moveTo(place[0] + place[2] / 2, place[1] + place[3] / 2)
-        auto.click()
-        t2= time.time()
-        print(t2-t1)
-    if flags[0]==True and flags[1]==True:
-        auto.moveTo(place[0]+place[2]/2,place[1]+place[3]/2)
-        auto.click()
+
+    def search_3(j):
+        place = auto.locateOnScreen(j)
+
+        if bool(place):
+            print(3)
+            auto.moveTo(place[0] + place[2] / 2, place[1] + place[3] / 2)
+            auto.click()
+            t2 = time.time()
+            print(t2 - t1)
+            exit(1)
+
+    def search_2(k):
+        place = auto.locateOnScreen(k)
+
+        if bool(place):
+            print(2)
+            for j in varient3:
+                proc = multiprocessing.Process(target=search_3, args=(j,))
+                proc.start()
+                procs.append(proc)
+            for proc in procs:
+                proc.join()
+            procs.clear()
+
+    if bool(place):
+        print(1)
+        for k in varient2:
+            proc = multiprocessing.Process(target=search_2, args=(k,))
+            proc.start()
+            procs.append(proc)
+        for proc in procs:
+            proc.join()
+        procs.clear()
+
+    # if flags[0]==True and flags[1]==True:
+    #     auto.moveTo(place[0]+place[2]/2,place[1]+place[3]/2)
+    #     auto.click()
 
 
 timer()
 t1 = time.time()
 
-# place = auto.locateOnScreen('bs.png')
 procs = []
-# for k in range(2):
-for j in varient:
-    multiprocessing.Process(target=search, args=(j,0)).start()
 
-# for i in varient2:
-#     # proc = multiprocessing.Process(target=search,  args=(i,))
-#     # proc.start()
-#     # procs.append(proc)
-#     # for proc in procs:
-#     #     proc.join()
-#     # procs.clear()
-#     multiprocessing.Process(target=search, args=(i,1)).start()
-
-print(flags)
+for i in varient:
+    proc = multiprocessing.Process(target=search_1, args=(i,))
+    proc.start()
+    procs.append(proc)
+for proc in procs:
+    proc.join()
+procs.clear()
 
 # auto.confirm("Are you ready?")
 
